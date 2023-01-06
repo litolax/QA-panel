@@ -1,4 +1,5 @@
 ﻿import NextAuth from "next-auth"
+import {validateAccount, createAccount} from "../../../src/server/database";
 
 /**
  * Takes a token, and returns a new token with updated
@@ -95,8 +96,15 @@ export default NextAuth({
         },
         async signIn(props) {
             const profile = props.profile as any;
+            const username = props.user.name;
+            const email = props.user.email;
+            
             if (!profile.SpecialPermissions || !profile.SpecialPermissions.includes("qaPanel"))
                 return "/unauthorized";
+            
+            if (!await validateAccount(username!)) {
+                await createAccount(username!, email!)
+            }
             return true;
         }
     }
