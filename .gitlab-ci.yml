@@ -30,6 +30,6 @@ build:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker build -t $CI_REGISTRY/risegta/tools/qa-panel/qa-panel:latest -t $CI_REGISTRY/risegta/tools/qa-panel/qa-panel:$CI_COMMIT_TAG .
     - docker push $CI_REGISTRY/risegta/tools/qa-panel/qa-panel:$CI_COMMIT_TAG
-    - docker push $CI_REGISTRY/risegta/risegta/tools/qa-panel/qa-panel:latest
+    - docker push $CI_REGISTRY/risegta/tools/qa-panel/qa-panel:latest
   only:
     - tags
