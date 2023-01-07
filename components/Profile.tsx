@@ -1,20 +1,20 @@
-﻿import {Avatar, Button, Card, Typography} from 'antd';
-import {serverSideTranslations} from "next-i18next/serverSideTranslations";
-import {GetServerSideProps, NextPage} from "next";
+﻿import {Avatar, Button, Card, Select, Typography} from 'antd';
 import {useTranslation} from "next-i18next";
-import {authRedirect} from "../src/server/authRedirect";
-import {getSession, signOut} from "next-auth/react";
-import MainMenu from "../components/MainMenu";
-import {useState} from "react";
 import Image from "next/image";
-import {connectToDatabase} from "../src/server/database";
 import IAccount from "../src/types/IAccount";
-import {Utils} from "../src/Utils";
 import Permissions from "../src/types/Permissions";
+import MainMenu from "./MainMenu";
+import {useState} from "react";
+import {signOut} from "next-auth/react";
 
-const Profile: NextPage<{ account: IAccount }> = (props) => {
+const Profile = (props: { account: IAccount }) => {
     const [menuOpen, setMenuOpen] = useState(false);
     const {t} = useTranslation('profile');
+
+    const handlePermissionChange = (value: string) => {
+        console.log(`selected ${value}`);
+    };
+    
     return (
         <>
             <MainMenu state={{open: menuOpen, setOpen: setMenuOpen}}/>
@@ -47,9 +47,35 @@ const Profile: NextPage<{ account: IAccount }> = (props) => {
                         <Typography.Title level={3} style={{margin: 0}}>
                             {t('user.email')}: {props.account.email}
                         </Typography.Title>
-                        <Typography.Title level={3} style={{margin: 0}}>
-                            {t('user.permissions')}: {t(`common:permissions.${Permissions[props.account.permissions]}`)}
-                        </Typography.Title>
+                        {props.account.permissions == Permissions.Developer ?
+                            (<>
+                                <Typography.Title level={3} style={{margin: 0}}>
+                                    {t('user.permissions')}: {<Select
+                                    defaultValue={t(`common:permissions.${Permissions[Permissions.Junior]}`)}
+                                    style={{width: 120}}
+                                    onChange={handlePermissionChange}
+                                    options={[
+                                        {
+                                            value: Permissions.Senior,
+                                            label: t(`common:permissions.${Permissions[Permissions.Senior]}`),
+                                        },
+                                        {
+                                            value: Permissions.Middle,
+                                            label: t(`common:permissions.${Permissions[Permissions.Middle]}`),
+                                        },
+                                        {
+                                            value: Permissions.Junior,
+                                            label: t(`common:permissions.${Permissions[Permissions.Junior]}`),
+                                        }
+                                    ]}
+                                />}
+                                </Typography.Title>
+                            </>) :
+                            (<>
+                                <Typography.Title level={3} style={{margin: 0}}>
+                                    {t('user.permissions')}: {t(`common:permissions.${Permissions[props.account.permissions]}`)}
+                                </Typography.Title>
+                            </>)}
                         <Typography.Title level={3} style={{margin: 0}}>
                             {t('user.points')}: {props.account.points}
                         </Typography.Title>
@@ -67,20 +93,6 @@ const Profile: NextPage<{ account: IAccount }> = (props) => {
             </div>
         </>
     );
-}
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-    const session = await getSession(ctx);
-    const {db} = await connectToDatabase();
-    const account = await db.collection('accounts').findOne({username: session?.user?.name, email: session?.user?.email}) as IAccount;
-    
-    return {
-        redirect: await authRedirect(ctx),
-        props: {
-            account: Utils.cleanup(account),
-            ...(await serverSideTranslations(ctx.locale || 'ru', ['common', 'profile'])),
-        }
-    };
 }
 
 export default Profile;
