@@ -9,7 +9,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const {db} = await connectToDatabase();
 
     const account = await db.collection('accounts').findOne({
-        username: userId == 'mine' ? session?.user?.name : userId
+        username: userId == '@me' ? session?.user?.name : userId
     }) as IAccount;
 
     res.json({account: account})

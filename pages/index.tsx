@@ -11,7 +11,7 @@ export default function Home() {
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   return {
     redirect: await authRedirect(ctx) ?? {
-      destination: "/profile/mine",
+      destination: "/profile/@me",
     },
     props: {}
   };

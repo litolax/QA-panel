@@ -25,7 +25,7 @@ export default function Unauthorized() {
 async function redirectMainPage(ctx: any) {
     const session = await getSession(ctx);
     if (session) return {
-        destination: '/profile/mine',
+        destination: '/profile/@me',
         permanent: false
     }
     return undefined;
