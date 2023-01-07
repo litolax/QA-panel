@@ -12,7 +12,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return res.json({permission: data.permissions});
     }
     
-    if (!param || param.length < 2) return res.json({});
+    if (!param || param.length < 3 || +param[2] !== 0) return res.json({});
     
     await collection.updateOne({username: param[0]}, { $set: { permissions: +param[1]}})
     

@@ -10,16 +10,23 @@ import {signOut, useSession} from "next-auth/react";
 const Profile = (props: { account: IAccount, minePermission: Permissions }) => {
     const session = useSession();
     const [menuOpen, setMenuOpen] = useState(false);
+    const [permission, setPermission] = useState(props.account.permissions)
     const {t} = useTranslation('profile');
     const myProfile = session.data?.user?.name == props.account.username;
     
-    const handlePermissionChange = async (permission: string) => {
-        const response = await fetch(`/api/user/permission/${props.account.username}/${+permission}`, {
+    const handlePermissionChange = async (permissionKey: number) => {
+        if (props.minePermission !== Permissions.Developer) {
+            setPermission(permission);
+            return;
+        }
+        const response = await fetch(`/api/user/permission/${props.account.username}/${permissionKey}/${props.minePermission}`, {
             method: 'POST',
         });
 
         if (!response.ok)
             throw new Error(response.statusText)
+        
+        setPermission(permissionKey)
     };
 
     return (
@@ -60,7 +67,7 @@ const Profile = (props: { account: IAccount, minePermission: Permissions }) => {
                             (<>
                                 <Typography.Title level={3} style={{margin: 0}}>
                                     {t('user.permissions')}: {<Select
-                                    defaultValue={t(`common:permissions.${Permissions[props.account.permissions]}`)}
+                                    defaultValue={permission}
                                     style={{width: 145, marginLeft: 10}}
                                     onChange={handlePermissionChange}
                                     options={[
