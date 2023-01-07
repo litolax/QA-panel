@@ -5,16 +5,23 @@ import IAccount from "../src/types/IAccount";
 import Permissions from "../src/types/Permissions";
 import MainMenu from "./MainMenu";
 import {useState} from "react";
-import {signOut} from "next-auth/react";
+import {signOut, useSession} from "next-auth/react";
 
-const Profile = (props: { account: IAccount }) => {
+const Profile = (props: { account: IAccount, minePermission: Permissions }) => {
+    const session = useSession();
     const [menuOpen, setMenuOpen] = useState(false);
     const {t} = useTranslation('profile');
-
-    const handlePermissionChange = (value: string) => {
-        console.log(`selected ${value}`);
-    };
+    const myProfile = session.data?.user?.name == props.account.username;
     
+    const handlePermissionChange = async (permission: string) => {
+        const response = await fetch(`/api/user/permission/${props.account.username}/${+permission}`, {
+            method: 'POST',
+        });
+
+        if (!response.ok)
+            throw new Error(response.statusText)
+    };
+
     return (
         <>
             <MainMenu state={{open: menuOpen, setOpen: setMenuOpen}}/>
@@ -23,7 +30,9 @@ const Profile = (props: { account: IAccount }) => {
                 justifyContent: 'center',
                 margin: '10% auto',
             }}>
-                <Card title={t('title')} bordered={false} style={{
+                <Card
+                    title={myProfile ? t('titleMine') : `${t('titleNotMine')} ${props.account.username}`}
+                    bordered={false} style={{
                     width: '35%',
                     minWidth: '300px'
                 }}>
@@ -47,12 +56,12 @@ const Profile = (props: { account: IAccount }) => {
                         <Typography.Title level={3} style={{margin: 0}}>
                             {t('user.email')}: {props.account.email}
                         </Typography.Title>
-                        {props.account.permissions == Permissions.Developer ?
+                        {props.minePermission == Permissions.Developer && !myProfile ?
                             (<>
                                 <Typography.Title level={3} style={{margin: 0}}>
                                     {t('user.permissions')}: {<Select
-                                    defaultValue={t(`common:permissions.${Permissions[Permissions.Junior]}`)}
-                                    style={{width: 120}}
+                                    defaultValue={t(`common:permissions.${Permissions[props.account.permissions]}`)}
+                                    style={{width: 145, marginLeft: 10}}
                                     onChange={handlePermissionChange}
                                     options={[
                                         {
