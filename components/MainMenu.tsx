@@ -22,9 +22,9 @@ const MainMenu = (props: { state: { open: boolean, setOpen: Function } }) => {
                     height: '15%',
                     justifyContent: 'space-between'
                 }}>
-                    <Button type={"primary"}>Создать отчет</Button>
-                    <Button type={"primary"}>Посмотреть отчеты</Button>
-                    <Button type={"primary"}>Посмотреть список QA</Button>
+                    {/*<Button type={"primary"}>Создать отчет</Button>*/}
+                    {/*<Button type={"primary"}>Посмотреть отчеты</Button>*/}
+                    <Button type={"primary"} href={'/qa'}>Посмотреть список QA</Button>
                 </div>
             </Drawer>
         </>

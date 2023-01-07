@@ -102,7 +102,7 @@ const Profile = (props: { account: IAccount, minePermission: Permissions }) => {
                             justifyContent: 'space-around'
                         }}>
                             <Button onClick={() => setMenuOpen(!menuOpen)}>{t('common:menu.open')}</Button>
-                            <Button onClick={() => signOut()}>{t('logout')}</Button>
+                            {myProfile && <Button onClick={() => signOut()}>{t('logout')}</Button>}
                         </div>
                     </div>
                 </Card>

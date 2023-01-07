@@ -5,12 +5,11 @@ import IAccount from "../../src/types/IAccount";
 import Profile from "../../components/Profile";
 import Permissions from "../../src/types/Permissions";
 import {getSession} from "next-auth/react";
-
 const { NEXTAUTH_URL } = process.env;
 
 const ProfilePage: NextPage<{ account: IAccount, minePermission: Permissions }> = (props) => {
     return (
-       <Profile account={props.account} minePermission={props.minePermission}/>
+        <Profile account={props.account} minePermission={props.minePermission}/>
     );
 }
 
