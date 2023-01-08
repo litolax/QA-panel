@@ -60,9 +60,6 @@ const Profile = (props: { account: IAccount, minePermission: Permissions }) => {
                         <Typography.Title level={3} style={{margin: 0}}>
                             {t('user.name')}: {props.account.username}
                         </Typography.Title>
-                        <Typography.Title level={3} style={{margin: 0}}>
-                            {t('user.email')}: {props.account.email}
-                        </Typography.Title>
                         {props.minePermission == Permissions.Developer && !myProfile ?
                             (<>
                                 <Typography.Title level={3} style={{margin: 0}}>

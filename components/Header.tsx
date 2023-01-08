@@ -3,7 +3,7 @@ import {Button, Typography} from "antd";
 import MainMenu from "./MainMenu";
 import {useState} from "react";
 
-export default function Header(props: { home?: boolean }) {
+export default function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
     const {t} = useTranslation('header')
 
@@ -26,7 +26,7 @@ export default function Header(props: { home?: boolean }) {
                     display: 'flex',
                     justifyContent: 'space-evenly',
                     width: '30vw',
-                    marginRight: '10vw'
+                    marginRight: '5vw'
                 }}>
                     <Button style={{
                         width: '20%',
