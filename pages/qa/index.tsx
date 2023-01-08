@@ -10,7 +10,6 @@ import {useEffect, useState} from "react";
 import {useSession} from "next-auth/react";
 import Permissions from "../../src/types/Permissions";
 import {useTranslation} from "next-i18next";
-import { useRouter } from "next/router";
 
 const {NEXTAUTH_URL} = process.env;
 
@@ -25,9 +24,8 @@ export default function Index(props: { accounts: IAccount[] }) {
     const ownPermission = accounts.filter(a => a.username === session.data?.user?.name).shift()?.permissions;
     
     useEffect(() => {
-        setAccounts(accounts);
         refreshTableData();
-    }, [accounts, tableData])
+    }, [accounts])
     
 
     const onPointsHandleOk = async () => {
