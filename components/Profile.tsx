@@ -3,13 +3,12 @@ import {useTranslation} from "next-i18next";
 import Image from "next/image";
 import IAccount from "../src/types/IAccount";
 import Permissions from "../src/types/Permissions";
-import MainMenu from "./MainMenu";
 import {useState} from "react";
 import {signOut, useSession} from "next-auth/react";
+import Header from "./Header";
 
 const Profile = (props: { account: IAccount, minePermission: Permissions }) => {
     const session = useSession();
-    const [menuOpen, setMenuOpen] = useState(false);
     const [permission, setPermission] = useState(props.account.permissions)
     const {t} = useTranslation('profile');
     const myProfile = session.data?.user?.name == props.account.username;
@@ -31,7 +30,7 @@ const Profile = (props: { account: IAccount, minePermission: Permissions }) => {
 
     return (
         <>
-            <MainMenu state={{open: menuOpen, setOpen: setMenuOpen}}/>
+            <Header/>
             <div style={{
                 display: 'flex',
                 justifyContent: 'center',
@@ -98,7 +97,6 @@ const Profile = (props: { account: IAccount, minePermission: Permissions }) => {
                             gap: '30px',
                             justifyContent: 'space-around'
                         }}>
-                            <Button onClick={() => setMenuOpen(!menuOpen)}>{t('common:menu.open')}</Button>
                             {myProfile && <Button onClick={() => signOut()}>{t('logout')}</Button>}
                         </div>
                     </div>

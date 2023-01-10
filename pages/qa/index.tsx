@@ -64,7 +64,7 @@ export default function Index(props: { accounts: IAccount[] }) {
                 key: account._id,
                 name: account.username,
                 points: account.points,
-                tags: ['nice', 'developer', 'loser']
+                tags: [t(`common:permissions.${[Permissions[account.permissions]]}`)]
             })
         }
         

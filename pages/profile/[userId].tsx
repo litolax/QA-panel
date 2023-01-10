@@ -44,7 +44,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         props: {
             account: userJson.account,
             minePermission: permissionJson.permission,
-            ...(await serverSideTranslations(ctx.locale || 'ru', ['common', 'profile'])),
+            ...(await serverSideTranslations(ctx.locale || 'ru', ['common', 'profile', 'header'])),
         }
     };
 }
