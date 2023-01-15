@@ -60,6 +60,7 @@ export default function Index(props: { accounts: IAccount[], me: IAccount }) { /
             sender: props.me._id
         }
         
+        console.log(report);
         //todo add report to db
     }
 
