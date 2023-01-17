@@ -4,7 +4,6 @@ import IReport from "../../../../src/types/IReport";
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     const { param } = req.query;
-    console.log(JSON.stringify(param![0]))
 
     if (!param || param.length < 1) return res.json({});
 
