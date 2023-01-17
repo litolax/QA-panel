@@ -7,21 +7,17 @@ import type {ColumnsType} from 'antd/es/table';
 import IAccount from "../../src/types/IAccount";
 import {ObjectID} from "bson";
 import {useEffect, useState} from "react";
-import {useSession} from "next-auth/react";
 import Permissions from "../../src/types/Permissions";
 import {useTranslation} from "next-i18next";
 
 const {NEXTAUTH_URL} = process.env;
 
-export default function Index(props: { accounts: IAccount[] }) {
-    const session = useSession();
+export default function Index(props: { accounts: IAccount[], me: IAccount }) {
     const {t} = useTranslation('qa');
     const [tableData, setTableData] = useState([{ key: new ObjectID(), name: '', points: 0, tags: ['']}]);
     const [pointsModelOpen, setPointsModelOpen] = useState(false);
     const [pointsInfo, setPointsInfo] = useState({name: 'unknown', amount: 0});
     const [accounts, setAccounts] = useState(props.accounts);
-
-    const ownPermission = accounts.filter(a => a.username === session.data?.user?.name).shift()?.permissions;
     
     useEffect(() => {
         refreshTableData();
@@ -30,8 +26,8 @@ export default function Index(props: { accounts: IAccount[] }) {
 
     const onPointsHandleOk = async () => {
         setPointsModelOpen(false);
-        if (ownPermission != Permissions.Developer) return;
-        const response = await fetch(`/api/user/points/update/${pointsInfo.name}/${pointsInfo.amount}/${ownPermission}`);
+        if (props.me.permissions != Permissions.Developer) return;
+        const response = await fetch(`/api/user/points/update/${pointsInfo.name}/${pointsInfo.amount}/${props.me.permissions}`);
 
         if (!response.ok)
             throw new Error(response.statusText);
@@ -119,7 +115,7 @@ export default function Index(props: { accounts: IAccount[] }) {
                     <Button onClick={() => {
                         setPointsModelOpen(true)
                         setPointsInfo({name: `${record.name}`, amount: 0})
-                    }} disabled={ownPermission != Permissions.Developer}>{t('changePointsAmount')}</Button>
+                    }} disabled={props.me.permissions != Permissions.Developer}>{t('changePointsAmount')}</Button>
                 </Space>
             ),
         },
@@ -149,15 +145,26 @@ export default function Index(props: { accounts: IAccount[] }) {
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const response = await fetch(`${NEXTAUTH_URL}/api/users`);
 
+    const userResponse = await fetch(`${NEXTAUTH_URL}/api/user/@me`, {
+        headers: {
+            cookie: ctx.req.headers.cookie || "",
+        },
+    });
+
     if (!response.ok)
         throw new Error(response.statusText);
 
-    const json = await response.json()
+    if (!userResponse.ok)
+        throw new Error(userResponse.statusText);
+
+    const json = await response.json();
+    const userJson = await userResponse.json();
 
     return {
         redirect: await authRedirect(ctx),
         props: {
             accounts: json.accounts,
+            me: userJson.account,
             ...(await serverSideTranslations(ctx.locale || 'ru', ['common', 'header', 'qa'])),
         }
     };
