@@ -14,7 +14,7 @@ import {ObjectId} from "bson";
 const {NEXTAUTH_URL} = process.env;
 
 export default function Index(props: { accounts: IAccount[], me: IAccount }) { //todo rework all problems with my account and perms to me API
-    const {t} = useTranslation(); //todo locale
+    const {t} = useTranslation('report');
     const session = useSession();
 
     const [reportTypes, setReportTypes] = useState([ReportType.none]);
@@ -73,15 +73,15 @@ export default function Index(props: { accounts: IAccount[], me: IAccount }) { /
                 margin: '0 auto 25px auto',
 
             }}>
-                <Typography.Title>Создание отчета</Typography.Title>
+                <Typography.Title>{t('title')}</Typography.Title>
 
                 <div style={{
                     marginBottom: '25px'
                 }}>
-                    <Typography.Title level={5} style={{marginBottom: '25px'}}>Ваш
-                        никнейм: {session.data?.user?.name}</Typography.Title>
+                    <Typography.Title level={5} style={{marginBottom: '25px'}}>
+                        {t('yourUsername')}: {session.data?.user?.name}</Typography.Title>
 
-                    <Typography.Text strong={true}>Тип:</Typography.Text>
+                    <Typography.Text strong={true}>{t('reportType.title')}:</Typography.Text>
                     <Select
                         style={{width: '35vw', marginLeft: 15}}
                         onChange={handleReportTypeChange}
@@ -89,27 +89,27 @@ export default function Index(props: { accounts: IAccount[], me: IAccount }) { /
                         options={[
                             {
                                 value: ReportType.problem,
-                                label: t(`Нахождение проблемы/бага и создание отчета/карточки по нему`),
+                                label: t(`reportType.types.${ReportType[ReportType.problem]}`)
                             },
                             {
                                 value: ReportType.acceptOtherReport,
-                                label: t(`Подтверждение карточки (с доказательствами)`),
+                                label: t(`reportType.types.${ReportType[ReportType.acceptOtherReport]}`)
                             },
                             {
                                 value: ReportType.cooperation,
-                                label: t(`Кооперация с другим QA`),
+                                label: t(`reportType.types.${ReportType[ReportType.cooperation]}`)
                             },
                             {
                                 value: ReportType.online,
-                                label: t(`Онлайн на тестовом сервере`),
+                                label: t(`reportType.types.${ReportType[ReportType.online]}`)
                             },
                             {
                                 value: ReportType.devHelp,
-                                label: t(`Прямая помощь по просьбе разработчиков`),
+                                label: t(`reportType.types.${ReportType[ReportType.devHelp]}`)
                             },
                             {
                                 value: ReportType.adminHelp,
-                                label: t(`Прямая помощь по просьбе администраторов`),
+                                label: t(`reportType.types.${ReportType[ReportType.adminHelp]}`)
                             }
                         ]}
                     />
@@ -119,8 +119,7 @@ export default function Index(props: { accounts: IAccount[], me: IAccount }) { /
                     <div style={{
                         marginBottom: '25px'
                     }}>
-                        <Typography.Text strong={true}>Упомяните участников QA команды, с которыми
-                            кооперировались</Typography.Text>
+                        <Typography.Text strong={true}>{t('mentionQaMembers')}</Typography.Text>
                         <Mentions
                             style={{width: '15vw', marginLeft: 15}}
                             onChange={onMentionsChange}
@@ -134,18 +133,18 @@ export default function Index(props: { accounts: IAccount[], me: IAccount }) { /
                 <div style={{
                     marginBottom: '25px'
                 }}>
-                    <Typography.Title level={5} style={{marginBottom: '25px'}}>Доказательства:</Typography.Title>
+                    <Typography.Title level={5} style={{marginBottom: '25px'}}>{t('proofs')}:</Typography.Title>
                     <Input.TextArea onChange={handleProofsChange} rows={6} style={{width: '37vw', resize: 'none'}}/>
                 </div>
 
                 <div style={{
                     marginBottom: '25px'
                 }}>
-                    <Typography.Title level={5} style={{marginBottom: '25px'}}>Комментарий:</Typography.Title>
+                    <Typography.Title level={5} style={{marginBottom: '25px'}}>{t('comment')}:</Typography.Title>
                     <Input.TextArea onChange={handleCommentChange} rows={4} style={{width: '37vw', resize: 'none'}}/>
                 </div>
 
-                <Button type="primary" onClick={createReport}>Отправить</Button>
+                <Button type="primary" onClick={createReport}>{t('send')}</Button>
             </div>
         </>
     );
@@ -174,7 +173,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         props: {
             accounts: json.accounts,
             me: userJson.account,
-            ...(await serverSideTranslations(ctx.locale || 'ru', ['common', 'header'])),
+            ...(await serverSideTranslations(ctx.locale || 'ru', ['common', 'header', 'report'])),
         }
     };
 }
