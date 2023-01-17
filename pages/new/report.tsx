@@ -50,18 +50,22 @@ export default function Index(props: { accounts: IAccount[], me: IAccount }) { /
         setMentions(value)
     };
     
-    const createReport = () => {
+    const createReport = async () => {
+        const validatedMentions = mentions.split('@').filter((e) => e.trim().length > 0 ).map(e => e.trim());
+
         const report: IReport = {
             _id: new ObjectId(),
             types: reportTypes,
-            mentions: mentions,
+            mentions: validatedMentions,
             proofs: proofs,
             comment: comment,
             sender: props.me._id
         }
-        
-        console.log(report);
-        //todo add report to db
+
+        const response = await fetch(`/api/report/create/${JSON.stringify(report)}`);
+
+        if (!response.ok)
+            throw new Error(response.statusText);
     }
 
     return (
