@@ -5,7 +5,7 @@ import IAccount from "../../src/types/IAccount";
 import Profile from "../../components/Profile";
 import Permissions from "../../src/types/Permissions";
 import {getSession} from "next-auth/react";
-const { NEXTAUTH_URL } = process.env;
+import {API} from "../../src/server/API";
 
 const ProfilePage: NextPage<{ account: IAccount, minePermission: Permissions }> = (props) => {
     return (
@@ -16,34 +16,15 @@ const ProfilePage: NextPage<{ account: IAccount, minePermission: Permissions }> 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const session = await getSession(ctx);
     const { userId } = ctx.query;
-    
-    const userResponse = await fetch(`${NEXTAUTH_URL}/api/user/${userId}`, {
-        headers: {
-            cookie: ctx.req.headers.cookie || "",
-        },
-    });
 
-    const permissionResponse = await fetch(`${NEXTAUTH_URL}/api/user/permission/${session?.user?.name}`, {
-        method: 'GET',
-        headers: {
-            cookie: ctx.req.headers.cookie || "",
-        },
-    });
-
-    if (!userResponse.ok)
-        throw new Error(userResponse.statusText);
-
-    if (!permissionResponse.ok)
-        throw new Error(permissionResponse.statusText);
-    
-    const userJson = await userResponse.json()
-    const permissionJson = await permissionResponse.json()
+    const account = await API.getAccount(`${userId}`, ctx);
+    const minePermission = await API.getUserPermission(session?.user?.name ?? '', ctx);
 
     return {
         redirect: await authRedirect(ctx),
         props: {
-            account: userJson.account,
-            minePermission: permissionJson.permission,
+            account: account,
+            minePermission: minePermission,
             ...(await serverSideTranslations(ctx.locale || 'ru', ['common', 'profile', 'header'])),
         }
     };

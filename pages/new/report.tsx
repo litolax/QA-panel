@@ -10,8 +10,7 @@ import ReportType from "../../src/types/ReportType";
 import IAccount from "../../src/types/IAccount";
 import IReport from "../../src/types/IReport";
 import {ObjectId} from "bson";
-
-const {NEXTAUTH_URL} = process.env;
+import {API} from "../../src/server/API";
 
 export default function Index(props: { accounts: IAccount[], me: IAccount }) { //todo rework all problems with my account and perms to me API
     const {t} = useTranslation('report');
@@ -155,28 +154,14 @@ export default function Index(props: { accounts: IAccount[], me: IAccount }) { /
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-
-    const response = await fetch(`${NEXTAUTH_URL}/api/users`);
-    const userResponse = await fetch(`${NEXTAUTH_URL}/api/user/@me`, {
-        headers: {
-            cookie: ctx.req.headers.cookie || "",
-        },
-    });
-
-    if (!response.ok)
-        throw new Error(response.statusText);
-
-    if (!userResponse.ok)
-        throw new Error(userResponse.statusText);
-
-    const json = await response.json();
-    const userJson = await userResponse.json()
+    const me = await API.getAccount('@me', ctx);
+    const accounts = await API.getAllAccounts();
 
     return {
         redirect: await authRedirect(ctx),
         props: {
-            accounts: json.accounts,
-            me: userJson.account,
+            accounts: accounts,
+            me: me,
             ...(await serverSideTranslations(ctx.locale || 'ru', ['common', 'header', 'report'])),
         }
     };

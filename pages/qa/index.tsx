@@ -9,8 +9,7 @@ import {ObjectID} from "bson";
 import {useEffect, useState} from "react";
 import Permissions from "../../src/types/Permissions";
 import {useTranslation} from "next-i18next";
-
-const {NEXTAUTH_URL} = process.env;
+import {API} from "../../src/server/API";
 
 export default function Index(props: { accounts: IAccount[], me: IAccount }) {
     const {t} = useTranslation('qa');
@@ -143,28 +142,14 @@ export default function Index(props: { accounts: IAccount[], me: IAccount }) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-    const response = await fetch(`${NEXTAUTH_URL}/api/users`);
-
-    const userResponse = await fetch(`${NEXTAUTH_URL}/api/user/@me`, {
-        headers: {
-            cookie: ctx.req.headers.cookie || "",
-        },
-    });
-
-    if (!response.ok)
-        throw new Error(response.statusText);
-
-    if (!userResponse.ok)
-        throw new Error(userResponse.statusText);
-
-    const json = await response.json();
-    const userJson = await userResponse.json();
+    const me = await API.getAccount('@me', ctx);
+    const accounts = await API.getAllAccounts();
 
     return {
         redirect: await authRedirect(ctx),
         props: {
-            accounts: json.accounts,
-            me: userJson.account,
+            accounts: accounts,
+            me: me,
             ...(await serverSideTranslations(ctx.locale || 'ru', ['common', 'header', 'qa'])),
         }
     };
