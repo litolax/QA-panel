@@ -56,8 +56,8 @@ export default function Index(props: { accounts: IAccount[], me: IAccount }) { /
             _id: new ObjectId(),
             types: reportTypes,
             mentions: validatedMentions,
-            proofs: proofs,
-            comment: comment,
+            proofs: encodeURIComponent(proofs),
+            comment: encodeURIComponent(comment),
             sender: props.me._id
         }
 
