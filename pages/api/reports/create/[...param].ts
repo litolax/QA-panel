@@ -10,7 +10,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const {db} = await connectToDatabase();
     const collection = await db.collection('reports');
 
+    console.log(`parse: ${JSON.parse(param[0])}`);
     const report = JSON.parse(param[0]) as IReport;
+    console.log(`string: ${JSON.stringify(report)}`);
 
     await collection.insertOne(report)
 
