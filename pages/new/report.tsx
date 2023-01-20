@@ -61,7 +61,7 @@ export default function Index(props: { accounts: IAccount[], me: IAccount }) { /
             sender: props.me._id
         }
 
-        const response = await fetch(`/api/report/create/${JSON.stringify(report)}`);
+        const response = await fetch(`/api/reports/create/${JSON.stringify(report)}`);
 
         if (!response.ok)
             throw new Error(response.statusText);

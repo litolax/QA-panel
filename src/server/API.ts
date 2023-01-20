@@ -1,5 +1,6 @@
 ﻿import IAccount from "../types/IAccount";
 import Permissions from "../types/Permissions";
+import IReport from "../types/IReport";
 
 const {NEXTAUTH_URL} = process.env;
 
@@ -44,5 +45,16 @@ export namespace API {
         const json = await response.json();
 
         return json.permission;
+    }
+
+    export async function getAllReports() : Promise<IReport[]> {
+        const response = await fetch(`${NEXTAUTH_URL}/api/reports`);
+
+        if (!response.ok)
+            throw new Error(response.statusText);
+
+        const json = await response.json();
+
+        return json.reports;
     }
 }

@@ -19,11 +19,13 @@ const MainMenu = (props: { state: { open: boolean, setOpen: Function } }) => {
                 <div style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    height: '15%',
+                    height: '20%',
+                    minHeight: `calc(50px*3)`,
                     justifyContent: 'space-between'
                 }}>
-                    <Button type={"primary"} href={'/qa'}>Посмотреть список QA</Button>
+                    <Button type={"primary"} href={'/qa'}>Список QA</Button>
                     <Button type={"primary"} href={'/new/report'}>Создать отчет</Button>
+                    <Button type={"primary"} href={'/qa/reports'}>Отчеты</Button>
                 </div>
             </Drawer>
         </>
