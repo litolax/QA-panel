@@ -16,9 +16,11 @@ export default function Unauthorized() {
 			title={t('errors.unauthorized.title')}
 			subTitle={t('errors.unauthorized.description')}
 			extra={
-				<Button type='primary' onClick={() => signIn('rise')}>
-					{t('errors.unauthorized.login')}
-				</Button>
+				<>
+					<Button type='primary' onClick={() => signIn('google')}>
+						{t('errors.unauthorized.loginWith.google')}
+					</Button>
+				</>
 			}
 		/>
 	);

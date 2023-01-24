@@ -6,7 +6,7 @@ export default function SignIn() {
 	const session = useSession();
 	const router = useRouter();
 	useEffect(() => {
-		if (session.status == 'unauthenticated') signIn('rise');
+		if (session.status == 'unauthenticated') signIn('google');
 		else router.push('/');
 	});
 

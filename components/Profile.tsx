@@ -66,14 +66,7 @@ const Profile = (props: { account: IAccount; minePermission: Permissions }) => {
 						<Avatar
 							size={{ xs: 34, sm: 42, md: 50, lg: 74, xl: 100, xxl: 120 }}
 							draggable={false}
-							icon={
-								<Image
-									src={'/rise_logo.png'}
-									width={300}
-									height={300}
-									alt={''}
-								/>
-							}
+							icon={<Image src={''} width={300} height={300} alt={''} />}
 						/>
 						<Typography.Title level={3} style={{ margin: 0 }}>
 							{t('user.name')}: {props.account.username}
